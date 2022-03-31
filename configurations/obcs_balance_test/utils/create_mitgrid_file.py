@@ -200,52 +200,55 @@ def create_new_mitgrid(output_file,mitgrid_matrices_L0_grid_L1_domain,XG_L0_grid
     sg.gridio.write_mitgridfile(output_file, mg_new_L0_grid_L1_domain, n_rows, n_cols)
     return(mg_new_L0_grid_L1_domain, n_rows, n_cols)
 
-def create_mitgrid_files(ecco_path,print_status,L0_llc):
+def create_mitgrid_files(config_dir,ecco_path,print_status):
 
-    shape_dict = {}
+    L0_llc = 90
 
-    # make a list of pertinent paths
+    if print_status:
+        print('Creating the grid information for the obcs_balance_test experiments')
+    # step 0: make the ecco path
     L0_llc_mitgrid_dir = os.path.join(ecco_path,'LLC'+str(L0_llc)+'_Files','mitgrid_tiles')
 
-    # step 1: read in bathy faces overlapping region of interest
+    # step 1: read in grid "faces" overlapping region of interest
     if print_status:
-        print('Reading faces 4 and 5 from the LLC'+str(L0_llc)+' (L0) configuration')
+        print('    - Reading faces 4 and 5 from the LLC'+str(L0_llc)+' configuration')
     XC_45,YC_45,XG_45,YG_45 = read_in_L0_domain_components(L0_llc_mitgrid_dir,L0_llc)
 
     # step 2: expand the L1 domain
+    if print_status:
+        print('    - Generating the level coordinates, based on the LLC'+str(L0_llc)+' grid')
     L1_domain_coords = generate_L1_domain_bounds(XC_45,YC_45,XG_45,YG_45)
-
     mitgrid_matrices_L0_grid_L1_domain = create_mitgrid_matrices(L1_domain_coords)
 
-    output_dir = '..'
     if print_status:
-        print('    Generating mitgrid for the L1_'+str(L0_llc)+' domain')
-    output_file = os.path.join(output_dir,'input','tile001.mitgrid')
+        print('    - Generating the mitgrid...')
+    output_file = os.path.join(config_dir,'input','tile001.mitgrid')
     L0_llc_mitgrid, rows, cols = create_new_mitgrid(output_file, mitgrid_matrices_L0_grid_L1_domain,
                        L1_domain_coords[2],L1_domain_coords[3],factor=1)
     if print_status:
-        print('        The L1_'+str(L0_llc)+' domain has '+str(cols)+' rows and '+str(rows)+' cols')
+        print('      - The domain has '+str(cols)+' rows and '+str(rows)+' cols')
+        print('      - Output to '+output_file)
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("-d", "--config_dir", action="store",
+                        help="The directory where the L1, L2, and L3 configurations are stored.", dest="config_dir",
+                        type=str, required=True)
+
     parser.add_argument("-e", "--ecco_directory", action="store",
                         help="Path to the ECCO directory where LLC files are stored.", dest="ecco_path",
                         type=str, required=False, default = '../ECCO')
-
-    parser.add_argument("-l", "--llc", action="store",
-                        help="The LLC number of the source domain.", dest="llc",
-                        type=int, required=True)
 
     parser.add_argument("-p", "--print_status", action="store",
                         help="Print status of routine (1 for True, 0 for False).", dest="print_status",
                         type=int, required=False, default=1)
 
     args = parser.parse_args()
+    config_dir = args.config_dir
     ecco_path = args.ecco_path
-    L0_llc = args.llc
     print_status = args.print_status
 
     if print_status>0:
@@ -253,4 +256,4 @@ if __name__ == '__main__':
     else:
         print_status=False
 
-    create_mitgrid_files(ecco_path,print_status,L0_llc)
+    create_mitgrid_files(config_dir,ecco_path,print_status)

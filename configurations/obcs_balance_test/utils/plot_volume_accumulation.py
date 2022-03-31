@@ -9,7 +9,7 @@ import argparse
 
 def read_grid_variables(config_dir):
 
-    wetgrid_file = os.path.join('..', 'input', 'grid.t001.nc')
+    wetgrid_file = os.path.join(config_dir, 'input', 'grid.t001.nc')
     ds = nc4.Dataset(wetgrid_file)
     rA = np.array(ds.variables['rA'][:, :])
     ds.close()
@@ -18,7 +18,7 @@ def read_grid_variables(config_dir):
 
 def read_volume_timeseries(config_dir,experiment,rA):
 
-    wetgrid_file = os.path.join('..', 'run_'+experiment, 'mnc_0001', 'ETAN.0000000000.t001.nc')
+    wetgrid_file = os.path.join(config_dir, 'run_'+experiment, 'mnc_0001', 'ETAN.0000000000.t001.nc')
     ds = nc4.Dataset(wetgrid_file)
     EtaN = np.array(ds.variables['ETAN'][:, :, :, :])
     EtaN = EtaN[:,0,:,:]
@@ -33,9 +33,8 @@ def read_volume_timeseries(config_dir,experiment,rA):
 
     return(modeled_volume_timeseries, modeled_mean_EtaN_timeseries)
 
-
-def read_expected_timeseries(config_dir):
-    ds = nc4.Dataset(os.path.join('..', 'input', 'expected_unbalanced_results.nc'))
+def read_expected_timeseries(config_dir,experiment):
+    ds = nc4.Dataset(os.path.join(config_dir, 'input', 'expected_'+experiment+'_results.nc'))
     expected_volume_timeseries = ds.variables['volume'][:]
     expected_EtaN_timeseries = ds.variables['mean_etan'][:]
     ds.close()
@@ -53,22 +52,27 @@ def plot_accumulation(config_dir):
 
     rA = read_grid_variables(config_dir)
 
-    zero_flux_volume_timeseries, zero_flux_EtaN_timeseries = read_volume_timeseries(config_dir, 'zero_flux',rA)
-    unbalanced_volume_timeseries, unbalanced_EtaN_timeseries = read_volume_timeseries(config_dir, 'unbalanced', rA)
-    balanced_by_mitgcm_volume_timeseries, balanced_by_mitgcm_EtaN_timeseries = read_volume_timeseries(config_dir, 'balanced_by_mitgcm', rA)
-    expected_volume_timeseries, expected_EtaN_timeseries = read_expected_timeseries(config_dir)
+    # zero_flux_volume_timeseries, zero_flux_EtaN_timeseries = read_volume_timeseries(config_dir, 'zero_flux',rA)
+    unbalanced_periodic_volume_timeseries, unbalanced_periodic_EtaN_timeseries = read_volume_timeseries(config_dir, 'unbalanced_periodic', rA)
+    expected_unbalanced_periodic_volume_timeseries, expected_unbalanced_periodic_EtaN_timeseries = read_expected_timeseries(config_dir,'unbalanced_periodic')
+    # balanced_by_mitgcm_volume_timeseries, balanced_by_mitgcm_EtaN_timeseries = read_volume_timeseries(config_dir, 'balanced_by_mitgcm', rA)
+    # expected_volume_timeseries, expected_EtaN_timeseries = read_expected_timeseries(config_dir)
 
     plt.subplot(1, 2, 1)
-    plt.plot(zero_flux_volume_timeseries, 'k--', label='zero_flux')
-    plt.plot(unbalanced_volume_timeseries, 'b-', label='unbalanced')
-    plt.plot(expected_volume_timeseries, 'b--', label='expected imbalance')
-    plt.plot(balanced_by_mitgcm_volume_timeseries, 'g-', label='balanced_by_mitgcm')
+    # plt.plot(zero_flux_volume_timeseries, 'k--', label='zero_flux')
+
+    plt.plot(expected_unbalanced_periodic_volume_timeseries, 'k.',
+             label='expected unbalanced_periodic imbalance', markersize = 10)
+    plt.plot(unbalanced_periodic_volume_timeseries, 'b-', label='unbalanced_periodic')
+    # plt.plot(balanced_by_mitgcm_volume_timeseries, 'g-', label='balanced_by_mitgcm')
     plt.legend()
     plt.subplot(1, 2, 2)
-    plt.plot(zero_flux_EtaN_timeseries,'k--',label='zero_flux')
-    plt.plot(unbalanced_EtaN_timeseries, 'b-', label='unbalanced')
-    plt.plot(expected_EtaN_timeseries, 'b--', label='expected imbalance')
-    plt.plot(balanced_by_mitgcm_EtaN_timeseries, 'g-', label='balanced_by_mitgcm')
+    # plt.plot(zero_flux_EtaN_timeseries,'k--',label='zero_flux')
+
+    plt.plot(expected_unbalanced_periodic_EtaN_timeseries, 'k.',
+             label='expected unbalanced_periodic imbalance', markersize = 10)
+    plt.plot(unbalanced_periodic_EtaN_timeseries, 'b-', label='unbalanced_periodic')
+    # plt.plot(balanced_by_mitgcm_EtaN_timeseries, 'g-', label='balanced_by_mitgcm')
     plt.legend()
     plt.show()
 

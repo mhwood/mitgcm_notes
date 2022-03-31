@@ -7,6 +7,21 @@ from scipy.interpolate import griddata
 import matplotlib.pyplot as plt
 import argparse
 
+
+def read_grid_variables(config_dir):
+
+    wetgrid_file = os.path.join(config_dir, 'input', 'grid.t001.nc')
+    ds = nc4.Dataset(wetgrid_file)
+    rA = np.array(ds.variables['rA'][:, :])
+    dxG = np.array(ds.variables['dxG'][:, :])
+    dyG = np.array(ds.variables['dyG'][:, :])
+    hFacS = np.array(ds.variables['HFacS'][:, :, :])
+    hFacW = np.array(ds.variables['HFacW'][:, :, :])
+    drF = np.array(ds.variables['drF'][:])
+    ds.close()
+
+    return(rA, dxG, dyG, drF, hFacS, hFacW)
+
 def get_reference_profiles():
     tRef = np.array([18.89, 18.89, 18.89, 18.89, 18.89, 18.87,
                     18.85, 18.82, 18.80, 18.73, 18.65, 18.57,
@@ -41,40 +56,7 @@ def get_reference_profiles():
                     34.74, 34.74, 34.73, 34.73, 34.73, 34.73,
                     34.73, 34.72, 34.72, 34.72, 34.72, 34.72])
 
-    delR = np.array([1.00, 1.14, 1.30, 1.49, 1.70,
-                     1.93, 2.20, 2.50, 2.84, 3.21,
-                     3.63, 4.10, 4.61, 5.18, 5.79,
-                     6.47, 7.20, 7.98, 8.83, 9.73,
-                     10.69, 11.70, 12.76, 13.87, 15.03,
-                     16.22, 17.45, 18.70, 19.97, 21.27,
-                     22.56, 23.87, 25.17, 26.46, 27.74,
-                     29.00, 30.24, 31.45, 32.65, 33.82,
-                     34.97, 36.09, 37.20, 38.29, 39.37,
-                     40.45, 41.53, 42.62, 43.73, 44.87,
-                     46.05, 47.28, 48.56, 49.93, 51.38,
-                     52.93, 54.61, 56.42, 58.38, 60.53,
-                     62.87, 65.43, 68.24, 71.33, 74.73,
-                     78.47, 82.61, 87.17, 92.21, 97.79,
-                     103.96, 110.79, 118.35, 126.73, 136.01,
-                     146.30, 157.71, 170.35, 184.37, 199.89,
-                     217.09, 236.13, 257.21, 280.50, 306.24,
-                     334.64, 365.93, 400.38, 438.23, 479.74, ])
-
-    return(tRef,sRef,delR)
-
-def read_grid_variables(config_dir):
-
-    wetgrid_file = os.path.join('..', 'input', 'grid.t001.nc')
-    ds = nc4.Dataset(wetgrid_file)
-    rA = np.array(ds.variables['rA'][:, :])
-    dxG = np.array(ds.variables['dxG'][:, :])
-    dyG = np.array(ds.variables['dyG'][:, :])
-    hFacC = np.array(ds.variables['HFacC'][:, :, :])
-    hFacS = np.array(ds.variables['HFacS'][:, :, :])
-    hFacW = np.array(ds.variables['HFacW'][:, :, :])
-    ds.close()
-
-    return(rA, dxG, dyG, hFacC, hFacS, hFacW)
+    return(tRef,sRef)
 
 def calculate_flux(boundary,field,width,delR,hFac):
     flux = np.zeros_like(field)
@@ -84,39 +66,34 @@ def calculate_flux(boundary,field,width,delR,hFac):
             flux[j,i] = width[i]*delR[j]*hFac[j,i]*field[j,i]
             total_area += width[i]*delR[j]*hFac[j,i]
 
-            if i==11 and boundary=='south' and j==82:
-                print('|- south -----------------------------|')
-                print('    drF(k) ',delR[j])
-                print('    hFacS[j,i] ',hFac[j,i])
-                print('    dxG[i] ',width[i])
-                print('    OBSv[j,i] ',field[j,i])
-
-            if i==10 and boundary=='north' and j==68:
-                print('|- north -----------------------------|')
-                print('    drF(k) ',delR[j])
-                print('    hFacS[j,i] ',hFac[j,i])
-                print('    dxG[i] ',width[i])
-                print('    OBSv[j,i] ',field[j,i])
-
-            if i==5 and boundary=='west' and j==85:
-                print('|- west -----------------------------|')
-                print('    drF(k) ',delR[j])
-                print('    hFacW[j,i] ',hFac[j,i])
-                print('    dyG[i] ',width[i])
-                print('    OBSu[j,i] ',field[j,i])
-
-    # plt.imshow(flux)
-    # plt.title('flux')
-    # plt.show()
+            # if i==11 and boundary=='south' and j==82:
+            #     print('|- south -----------------------------|')
+            #     print('    drF(k) ',delR[j])
+            #     print('    hFacS[j,i] ',hFac[j,i])
+            #     print('    dxG[i] ',width[i])
+            #     print('    OBSv[j,i] ',field[j,i])
+            #
+            # if i==10 and boundary=='north' and j==68:
+            #     print('|- north -----------------------------|')
+            #     print('    drF(k) ',delR[j])
+            #     print('    hFacS[j,i] ',hFac[j,i])
+            #     print('    dxG[i] ',width[i])
+            #     print('    OBSv[j,i] ',field[j,i])
+            #
+            # if i==5 and boundary=='west' and j==85:
+            #     print('|- west -----------------------------|')
+            #     print('    drF(k) ',delR[j])
+            #     print('    hFacW[j,i] ',hFac[j,i])
+            #     print('    dyG[i] ',width[i])
+            #     print('    OBSu[j,i] ',field[j,i])
 
     total_flux = np.sum(flux)
     return(total_flux,total_area)
 
 def create_boundary_condition(condition_type, boundary,var_name,
-                              dxG, dyG,
-                              hFacC, hFacS, hFacW):
+                              dxG, dyG, drF,
+                              hFacS, hFacW):
     n_timestep = 8*24
-    get_reference_profiles()
     Nr = 90
     sNx = 20
     sNy = 20
@@ -150,24 +127,21 @@ def create_boundary_condition(condition_type, boundary,var_name,
 
     flux_timeseries = np.zeros((n_timestep,))
 
-    if condition_type=='unbalanced':
+    if condition_type=='unbalanced_constant':
 
         if continue_to_calculation:
-            _, _, delR = get_reference_profiles()
-            normalized_vel_profile = 1/delR
+            normalized_vel_profile = 1/drF
             normalized_vel_profile = normalized_vel_profile-normalized_vel_profile[-1]
             normalized_vel_profile = normalized_vel_profile*(1/normalized_vel_profile[0])
             if boundary=='south' or boundary=='north':
                 normalized_vel_profile *= 2
-
-            # normalized_vel_profile = np.ones((90,))
 
             vel_grid = np.zeros((Nr,sN))
             for i in range(sN):
                 vel_grid[:,i] = 0.1*normalized_vel_profile
             vel_grid *= hFac
 
-            total_flux, total_area = calculate_flux(boundary,vel_grid,width,delR,hFac)
+            total_flux, total_area = calculate_flux(boundary,vel_grid,width,drF,hFac)
             flux_timeseries[:] = total_flux
 
             # print('    area ', total_area)
@@ -175,6 +149,32 @@ def create_boundary_condition(condition_type, boundary,var_name,
 
             for timestep in range(n_timestep):
                 grid[timestep,:,:] = vel_grid
+
+    if condition_type=='unbalanced_periodic':
+
+        if continue_to_calculation:
+            normalized_vel_profile = 1/drF
+            normalized_vel_profile = normalized_vel_profile-normalized_vel_profile[-1]
+            normalized_vel_profile = normalized_vel_profile*(1/normalized_vel_profile[0])
+
+            if boundary=='south' or boundary=='north':
+                normalized_vel_profile *= 2
+
+            vel_grid = np.zeros((Nr,sN))
+            for i in range(sN):
+                vel_grid[:,i] = 0.1*normalized_vel_profile
+            vel_grid *= hFac
+
+            # print('    area ', total_area)
+            # print('    flow ', total_flux)
+
+            amplitude = 2
+            period = 12
+
+            for timestep in range(n_timestep):
+                grid[timestep,:,:] = vel_grid+ vel_grid*amplitude*np.sin(2*np.pi*timestep/period)
+                total_flux, total_area = calculate_flux(boundary, grid[timestep,:,:], width, drF, hFac)
+                flux_timeseries[timestep] = total_flux
 
     return(grid,flux_timeseries)
 
@@ -184,63 +184,46 @@ def create_boundary_condition(condition_type, boundary,var_name,
 def create_boundary_conditions(config_dir):
 
     print('Creating sets of boundary conditions')
-    llc = 90
 
-    n_rows = 20
-    n_cols = 20
+    print('    - Reading in the grid information')
+    rA, dxG, dyG, drF, hFacS, hFacW = read_grid_variables(config_dir)
+    total_area = np.sum(dxG[:-1,:]*dyG[:,:-1])
 
-    rA, dxG, dyG, hFacC, hFacS, hFacW = read_grid_variables(config_dir)
+    for condition_type in ['unbalanced_constant','unbalanced_periodic']:
+        print('    - Creating the boundary conditions for the '+condition_type+' experiment')
 
-    # # read in the wet grids on each boundary
-    # wetgrid_file = os.path.join('..','input','wet_grids.nc')
-    # ds = nc4.Dataset(wetgrid_file)
-    # wetgrid_C = ds.variables['wet_grid_C'][:,:,:]
-    # wetgrid_S = ds.variables['wet_grid_S'][:, :, :]
-    # wetgrid_W = ds.variables['wet_grid_W'][:, :, :]
-    # ds.close()
+        if 'obcs_' + condition_type not in os.listdir(os.path.join(config_dir, 'input')):
+            os.mkdir(os.path.join(config_dir, 'input', 'obcs_' + condition_type))
 
-    surface_wet_grid = hFacC[0,:,:]
-    # surface_wet_grid[surface_wet_grid>0] = 1
-    total_wet_area = np.sum(dxG*dyG*surface_wet_grid)
-    total_area = np.sum(dxG*dyG)
-
-    all_total_flux_timeseries = []
-    all_etan_timeseries = []
-
-    for condition_type in ['balanced']:
-
-        if condition_type=='unbalanced':
-            flux_started = False
+        flux_started = False
 
         for boundary in ['west','north','south']:
             for var_name in ['UVEL','VVEL']:
                 bc_grid, flux_timeseries = create_boundary_condition(condition_type, boundary,var_name,
-                                  dxG, dyG, hFacC, hFacS, hFacW)
+                                  dxG, dyG, drF, hFacS, hFacW)
 
                 if boundary=='north' and var_name=='VVEL':
                     flux_timeseries *=-1
 
-                if condition_type=='unbalanced':
-                    if not flux_started:
-                        total_flux_timeseries = flux_timeseries
-                        flux_started=True
-                    else:
-                        total_flux_timeseries += flux_timeseries
-                output_file = os.path.join('..','input','obcs_'+condition_type, 'BC_'+boundary+'_'+var_name+'_'+condition_type+'.bin')
+                if not flux_started:
+                    total_flux_timeseries = flux_timeseries
+                    flux_started=True
+                else:
+                    total_flux_timeseries += flux_timeseries
+
+                output_file = os.path.join(config_dir,'input','obcs_'+condition_type, 'BC_'+boundary+'_'+var_name+'_'+condition_type+'.bin')
                 bc_grid.ravel('C').astype('>f4').tofile(output_file)
 
-        if condition_type == 'unbalanced':
-            cumulative_volume_timeseries = np.cumsum(3600*total_flux_timeseries)
-            mean_etan_timeseries = cumulative_volume_timeseries/total_area
+        cumulative_volume_timeseries = np.cumsum(3600*total_flux_timeseries)
+        mean_etan_timeseries = cumulative_volume_timeseries/total_area
 
-            ds = nc4.Dataset(os.path.join('..', 'input', 'expected_unbalanced_results.nc'),'w')
-
-            ds.createDimension('n',len(mean_etan_timeseries))
-            var = ds.createVariable('volume','f4',('n',))
-            var[:] = cumulative_volume_timeseries
-            var = ds.createVariable('mean_etan', 'f4', ('n',))
-            var[:] = mean_etan_timeseries
-            ds.close()
+        ds = nc4.Dataset(os.path.join('..', 'input', 'expected_'+condition_type+'_results.nc'),'w')
+        ds.createDimension('n',len(mean_etan_timeseries))
+        var = ds.createVariable('volume','f4',('n',))
+        var[:] = cumulative_volume_timeseries
+        var = ds.createVariable('mean_etan', 'f4', ('n',))
+        var[:] = mean_etan_timeseries
+        ds.close()
 
 
 if __name__ == '__main__':
