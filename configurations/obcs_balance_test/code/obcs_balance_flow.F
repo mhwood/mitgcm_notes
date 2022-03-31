@@ -397,6 +397,12 @@ C     and correct each OB using corresponding weight factor OBCS_balanceFac
           CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
      &                        SQUEEZE_RIGHT, myThid )
         ENDIF
+
+        PRINT *, 'MW: --- CORRECTIONS --------------------------------'
+        PRINT *, 'MW: inFlow',inFlow
+        PRINT *, 'MW: areaOB',areaOB
+        PRINT *, 'MW: inFlow/areaOB',inFlow/areaOB
+
         IF ( OBCSbalanceSurf ) THEN
          inFlow = inFlow + netFreshWaterFlux*mass2rUnit
 #ifdef ALLOW_SHELFICE
@@ -410,6 +416,12 @@ C     and correct each OB using corresponding weight factor OBCS_balanceFac
       IF ( OBCS_balanceFacW.GE.0. ) flowW = -inFlow*OBCS_balanceFacW
       IF ( OBCS_balanceFacN.GE.0. ) flowN =  inFlow*OBCS_balanceFacN
       IF ( OBCS_balanceFacS.GE.0. ) flowS = -inFlow*OBCS_balanceFacS
+
+      
+      PRINT *, 'MW: flowE',flowE
+      PRINT *, 'MW: flowW',flowW
+      PRINT *, 'MW: flowS',flowS
+      PRINT *, 'MW: flowN',flowN
 
       IF ( debugLevel.GE.debLevC  .AND. areaOB.GT.0. ) THEN
           WRITE(msgBuf,'(A,1P2E16.8)')

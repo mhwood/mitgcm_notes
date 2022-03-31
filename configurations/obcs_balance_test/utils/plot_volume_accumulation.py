@@ -52,28 +52,32 @@ def plot_accumulation(config_dir):
 
     rA = read_grid_variables(config_dir)
 
-    # zero_flux_volume_timeseries, zero_flux_EtaN_timeseries = read_volume_timeseries(config_dir, 'zero_flux',rA)
-    unbalanced_periodic_volume_timeseries, unbalanced_periodic_EtaN_timeseries = read_volume_timeseries(config_dir, 'unbalanced_periodic', rA)
-    expected_unbalanced_periodic_volume_timeseries, expected_unbalanced_periodic_EtaN_timeseries = read_expected_timeseries(config_dir,'unbalanced_periodic')
-    # balanced_by_mitgcm_volume_timeseries, balanced_by_mitgcm_EtaN_timeseries = read_volume_timeseries(config_dir, 'balanced_by_mitgcm', rA)
-    # expected_volume_timeseries, expected_EtaN_timeseries = read_expected_timeseries(config_dir)
+
+    # get the unbalanced timeseries
+    unbalanced_constant_volume_timeseries, _ = read_volume_timeseries(config_dir,'unbalanced_constant',rA)
+    unbalanced_periodic_volume_timeseries, _ = read_volume_timeseries(config_dir, 'unbalanced_periodic', rA)
+
+    expected_unbalanced_constant_volume_timeseries, _ = read_expected_timeseries(config_dir, 'unbalanced_constant')
+    expected_unbalanced_periodic_volume_timeseries, _ = read_expected_timeseries(config_dir,'unbalanced_periodic')
+
+    balanced_constant_volume_timeseries, _ = read_volume_timeseries(config_dir,'balanced_constant_manual',rA)
+    balanced_periodic_volume_timeseries, _ = read_volume_timeseries(config_dir,'balanced_periodic_manual',rA)
+
 
     plt.subplot(1, 2, 1)
-    # plt.plot(zero_flux_volume_timeseries, 'k--', label='zero_flux')
-
-    plt.plot(expected_unbalanced_periodic_volume_timeseries, 'k.',
-             label='expected unbalanced_periodic imbalance', markersize = 10)
-    plt.plot(unbalanced_periodic_volume_timeseries, 'b-', label='unbalanced_periodic')
-    # plt.plot(balanced_by_mitgcm_volume_timeseries, 'g-', label='balanced_by_mitgcm')
+    # plt.plot(expected_unbalanced_constant_volume_timeseries, 'k.', label='expected imbalance', markersize = 10)
+    # plt.plot(unbalanced_constant_volume_timeseries, 'b-', label='unbalanced')
+    plt.plot(balanced_constant_volume_timeseries, 'g-', label='balanced')
+    plt.title('Constant Boundary Imbalance')
     plt.legend()
+
     plt.subplot(1, 2, 2)
-    # plt.plot(zero_flux_EtaN_timeseries,'k--',label='zero_flux')
-
-    plt.plot(expected_unbalanced_periodic_EtaN_timeseries, 'k.',
-             label='expected unbalanced_periodic imbalance', markersize = 10)
-    plt.plot(unbalanced_periodic_EtaN_timeseries, 'b-', label='unbalanced_periodic')
-    # plt.plot(balanced_by_mitgcm_EtaN_timeseries, 'g-', label='balanced_by_mitgcm')
+    # plt.plot(expected_unbalanced_periodic_volume_timeseries, 'k.', label='expected imbalance', markersize = 10)
+    # plt.plot(unbalanced_periodic_volume_timeseries, 'b-', label='unbalanced')
+    plt.plot(balanced_periodic_volume_timeseries, 'g-', label='balanced')
     plt.legend()
+    plt.title('Periodic Boundary Imbalance')
+
     plt.show()
 
 
