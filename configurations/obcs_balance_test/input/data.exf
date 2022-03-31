@@ -1,0 +1,45 @@
+# *********************
+# External Forcing Data
+# *********************
+
+ &EXF_NML_01
+# useAtmWind        = .FALSE.,
+# exf_albedo        = 0.1,
+# useExfZenIncoming = .TRUE., 
+# select_ZenAlbedo  = 1,
+#
+# ocean_emissivity = 0.97,
+# ice_emissivity = 0.95,
+# snow_emissivity = 0.95,
+ exf_iprec         = 32,
+ exf_yftype        = 'RL',
+# useExfYearlyFields= .FALSE.,
+# useExfCheckRange  = .FALSE.,
+# useRelativeWind   = .FALSE.,
+# readStressOnAgrid = .TRUE.,
+# rotateStressOnAgrid = .TRUE.,
+ /
+
+ &EXF_NML_02
+ /
+
+ &EXF_NML_03
+ /
+
+ &EXF_NML_04
+ /
+
+ &EXF_NML_OBCS
+ obcsNstartdate1     = 19920101,
+ obcsNstartdate2     = 000000,
+ obcsNperiod         = 3600.0,
+#
+ obcsSstartdate1     = 19920101,
+ obcsSstartdate2     = 000000,
+ obcsSperiod         = 3600.0,
+#
+ obcsWstartdate1     = 19920101,
+ obcsWstartdate2     = 000000,
+ obcsWperiod         = 3600.0,
+#
+ &

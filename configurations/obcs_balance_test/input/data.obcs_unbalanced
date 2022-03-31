@@ -1,0 +1,32 @@
+# Open-boundaries
+ &OBCS_PARM01
+#
+ OBCSfixTopo=.FALSE.,
+#
+ OB_Jnorth= 20*-1,
+ OB_Jsouth= 20*1,
+ OB_Ieast = 20*-1,
+ OB_Iwest = 20*1,
+#
+ useOBCSprescribe = .TRUE.,
+#
+ OBNuFile = 'obcs/BC_north_UVEL_unbalanced.bin',
+ OBSuFile = 'obcs/BC_south_UVEL_unbalanced.bin',
+ OBWuFile = 'obcs/BC_west_UVEL_unbalanced.bin',
+#
+ OBNvFile = 'obcs/BC_north_VVEL_unbalanced.bin',
+ OBSvFile = 'obcs/BC_south_VVEL_unbalanced.bin',
+ OBWvFile = 'obcs/BC_west_VVEL_unbalanced.bin',
+#
+# OBNtFile = 'obcs/unbalanced_BC_north_THETA.bin',
+# OBStFile = 'obcs/unbalanced_BC_south_THETA.bin',
+# OBWtFile = 'obcs/unbalanced_BC_west_THETA.bin',
+#
+# OBNsFile = 'obcs/unbalanced_BC_north_SALT.bin',
+# OBSsFile = 'obcs/unbalanced_BC_south_SALT.bin',
+# OBWsFile = 'obcs/unbalanced_BC_west_SALT.bin',
+ &
+
+
+ &OBCS_PARM02
+ &
