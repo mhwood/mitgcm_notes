@@ -44,5 +44,21 @@ cp ../run_zero_flux/mnc_0001/grid.t001.nc ../input
 ```
 
 ## Step 3: Run the model experiments
-Now that the model is built and the grid is obtained, boundary conditions can be created, and the balancing codes can be tested.
+Now that the model is built and the grid is obtained, boundary conditions can be created, and the balancing codes can be tested. First, we will run the unbalanced models and then testthe offline and online balancing codes.
+
+### Step 3.1: Make the unbalanced boundary conditions
+In this step, we generate two types of boundary conditions, which are unbalanced: one set which is a constant, imbalanced flux; and one with a periodic flux, which is also imbalanced.
+```
+python3 create_boundary_condition_sets.py -d config_dir
+```
+
+### Step 3.2: Run the unbalanced models
+```
+bash run_unbalanced_constant.sh
+bash run_unbalanced_periodic.sh
+```
+
+
+
+
 
