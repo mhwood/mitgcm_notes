@@ -85,7 +85,7 @@
 # (1992 is a leap year = 366*24*60*60)
 # at timesteps of 90s, the start iter is then
  niter0=0,
- nTimeSteps = 1680,
+ nTimeSteps = 100,
  doAB_onGtGs=.FALSE.,
  alph_AB=0.5,
  beta_AB=0.281105,

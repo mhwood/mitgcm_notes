@@ -66,26 +66,26 @@ def calculate_flux(boundary,field,width,delR,hFac):
             flux[j,i] = width[i]*delR[j]*hFac[j,i]*field[j,i]
             total_area += width[i]*delR[j]*hFac[j,i]
 
-            if i==11 and boundary=='south' and j==82:
-                print('|- south -----------------------------|')
-                print('    drF(k) ',delR[j])
-                print('    hFacS[j,i] ',hFac[j,i])
-                print('    dxG[i] ',width[i])
-                print('    OBSv[j,i] ',field[j,i])
-
-            if i==10 and boundary=='north' and j==68:
-                print('|- north -----------------------------|')
-                print('    drF(k) ',delR[j])
-                print('    hFacS[j,i] ',hFac[j,i])
-                print('    dxG[i] ',width[i])
-                print('    OBNv[j,i] ',field[j,i])
-
-            if i==5 and boundary=='west' and j==85:
-                print('|- west -----------------------------|')
-                print('    drF(k) ',delR[j])
-                print('    hFacW[j,i] ',hFac[j,i])
-                print('    dyG[i] ',width[i])
-                print('    OBWu[j,i] ',field[j,i])
+            # if i==11 and boundary=='south' and j==82:
+            #     print('|- south -----------------------------|')
+            #     print('    drF(k) ',delR[j])
+            #     print('    hFacS[j,i] ',hFac[j,i])
+            #     print('    dxG[i] ',width[i])
+            #     print('    OBSv[j,i] ',field[j,i])
+            #
+            # if i==10 and boundary=='north' and j==68:
+            #     print('|- north -----------------------------|')
+            #     print('    drF(k) ',delR[j])
+            #     print('    hFacS[j,i] ',hFac[j,i])
+            #     print('    dxG[i] ',width[i])
+            #     print('    OBNv[j,i] ',field[j,i])
+            #
+            # if i==5 and boundary=='west' and j==85:
+            #     print('|- west -----------------------------|')
+            #     print('    drF(k) ',delR[j])
+            #     print('    hFacW[j,i] ',hFac[j,i])
+            #     print('    dyG[i] ',width[i])
+            #     print('    OBWu[j,i] ',field[j,i])
 
     total_flux = np.sum(flux)
     return(total_flux,total_area)
@@ -189,7 +189,7 @@ def create_boundary_conditions(config_dir):
     rA, dxG, dyG, drF, hFacS, hFacW = read_grid_variables(config_dir)
     total_area = np.sum(dxG[:-1,:]*dyG[:,:-1])
 
-    for condition_type in ['unbalanced_constant']:#,'unbalanced_periodic']:
+    for condition_type in ['unbalanced_constant','unbalanced_periodic']:
         print('    - Creating the boundary conditions for the '+condition_type+' experiment')
 
         if 'obcs_' + condition_type not in os.listdir(os.path.join(config_dir, 'input')):
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-d", "--config_dir", action="store",
-                        help="The directory where the L1, L2, and L3 configurations are stored.", dest="config_dir",
+                        help="The directory where the configurations are stored.", dest="config_dir",
                         type=str, required=True)
 
     args = parser.parse_args()
