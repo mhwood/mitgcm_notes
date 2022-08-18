@@ -1,0 +1,72 @@
+# ====================
+# | Model parameters |
+# ====================
+#
+# Continuous equation parameters
+ &PARM01
+ Tref = 50*-1.9,
+ Sref = 50*34.4,
+ viscAz=1.E-3,
+ viscAh=600.0,
+ no_slip_sides=.FALSE.,
+ no_slip_bottom=.FALSE.,
+ diffKhT=100.0,
+ diffKzT=5.E-5,
+ diffKhS=100.0,
+ diffKzS=5.E-5,
+ bottomDragQuadratic=2.5E-3,
+ eosType='JMD95Z', 
+ HeatCapacity_cp = 3974.0,
+ rhoConst=1030.,
+ rhoConst=1030.,
+ gravity=9.81,
+ convertFW2Salt = 33.4,
+ rigidLid=.FALSE.,
+ implicitFreeSurface=.TRUE.,
+ exactConserv=.TRUE.,
+ hFacMin=0.05,
+ nonHydrostatic=.FALSE.,
+ readBinaryPrec=32,
+ useCDScheme = .TRUE.,
+ &
+
+# Elliptic solver parameters
+ &PARM02
+ cg2dMaxIters=1000,
+ cg2dTargetResidual=1.E-13,
+ cg3dMaxIters=400,
+ cg3dTargetResidual=1.E-13,
+ &
+
+# Time stepping parameters
+ &PARM03
+ nIter0=0,
+ nTimeSteps=168,
+ deltaT=3600.0,
+ abEps=0.1,
+ cAdjFreq = -1.,
+ tauCD = 400000.,
+ pChkptFreq=0.0,
+ chkptFreq=0.0,
+ dumpFreq=86400.0,
+ taveFreq=0.0,
+ monitorFreq=1.,
+ monitorSelect=2,
+ &
+
+# Gridding parameters
+ &PARM04
+ usingSphericalPolarGrid=.TRUE.,
+ ygOrigin = 70.0,
+ xgOrigin = -20.0,
+ delX=90*0.05,
+ delY=31*0.05,
+ delZ=50*10.0,
+ &
+
+# Input datasets
+ &PARM05
+ bathyFile='bathymetry.bin',
+ hydrogThetaFile='polar_theta_IC.bin',
+ hydrogSaltFile='polar_salinity_IC.bin',
+ &

@@ -1,0 +1,3 @@
+ &SGD_PARM01
+ SGDdepthFile='SGD_mask',
+ &
