@@ -1,3 +1,28 @@
+#-------------------------------------------------------------
+# SGD Package Choices
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+# the first parm set contains a some metadata
+
  &SGD_PARM01
- SGDdepthFile='SGD_mask',
+  sgd_nml_filePrec = 32,
  &
+
+
+#-------------------------------------------------------------
+# the second parm set contains the file names for masks,
+# the file names for the volume fluxes, and the date/time
+# information to read them in
+
+ &SGD_PARM02
+
+# outlet mask, volumes, and dates
+  sgd_nml_mask_fnames(1)        = 'sgd/sgd_outlet_1_mask.bin',
+  sgd_nml_volume_flux_fnames(1) = 'sgd/sgd_outlet_1_flux.bin',
+  sgd_nml_startdates_1(1)       = 19911231,
+  sgd_nml_startdates_2(1)       = 123000,
+  sgd_nml_periods(1)            = 3600.,
+ &
+
