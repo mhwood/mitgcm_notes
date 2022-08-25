@@ -44,6 +44,10 @@ C----&------------------------------------------------------------------xxxxxxx|
       _RL sgd_nml_periods(nSGD)
       CHARACTER*30 sgd_nml_mask_fnames(nSGD)
       CHARACTER*30 sgd_nml_volume_flux_fnames(nSGD)
+      LOGICAL sgd_nml_tend_apply_T
+      _RL sgd_nml_discharge_T
+      LOGICAL sgd_nml_tend_apply_S
+      _RL sgd_nml_discharge_S
 
 
 C----&------------------------------------------------------------------xxxxxxx|
@@ -51,7 +55,11 @@ C -- Define the namelists in data.sgd
 C----&------------------------------------------------------------------xxxxxxx|
 
       NAMELIST / SGD_PARM01 /
-     &     sgd_nml_filePrec
+     &     sgd_nml_filePrec,
+     &     sgd_nml_tend_apply_T,
+     &     sgd_nml_discharge_T,
+     &     sgd_nml_tend_apply_S,
+     &     sgd_nml_discharge_S
 
       NAMELIST / SGD_PARM02 /
      &     sgd_nml_mask_fnames,
@@ -97,6 +105,14 @@ C --   Local default flags and values for PRESCRIBE_VEC
       ENDDO
 
       sgd_nml_filePrec  = 32
+
+C --  Default is to apply temp and salt
+      sgd_nml_tend_apply_T = .TRUE.
+      sgd_nml_tend_apply_S = .TRUE.
+
+C --  Default is T = 0 deg C and S = 0 kg/m3
+      sgd_nml_discharge_T = 0
+      sgd_nml_discharge_S = 0
 
 C----&------------------------------------------------------------------xxxxxxx|
 
@@ -144,6 +160,10 @@ C----&------------------------------------------------------------------xxxxxxx|
       ENDDO
 
       sgd_filePrec  = sgd_nml_filePrec
+      sgd_tend_apply_T = sgd_nml_tend_apply_T
+      sgd_discharge_T = sgd_nml_discharge_T
+      sgd_tend_apply_S = sgd_nml_tend_apply_S
+      sgd_discharge_S = sgd_nml_discharge_S
 
 C----&------------------------------------------------------------------xxxxxxx|
 

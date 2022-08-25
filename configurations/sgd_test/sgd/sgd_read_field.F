@@ -11,7 +11,7 @@ C !ROUTINE: SGD_READ_FIELD
 
 C !INTERFACE:
       SUBROUTINE SGD_READ_FIELD(file_name, sgd_id,
-     I                          iRecord, myThid )
+     I                          iRecord, read_array, myThid )
 
 C     !DESCRIPTION:
 C     Initialize SGD variables
@@ -41,9 +41,9 @@ C     !LOCAL VARIABLES:
 C      INTEGER i,j,k,l, bi,bj
       INTEGER, PARAMETER :: debug = 1
       CHARACTER*(MAX_LEN_MBUF) msgBuf
-      INTEGER xSize, ySize
-      INTEGER length_of_rec,rcl
-      INTEGER global_mask_len
+      INTEGER read_array
+      INTEGER length_of_rec
+      INTEGER global_mask_len, mask_len
       INTEGER irec, dUnit, i, k
       Real*4 global_buff_r4(max_SGD_points)
       Real*8 global_buff_r8(max_SGD_points)
@@ -116,16 +116,17 @@ C  - This part reads in the GLOBAL variable for this timestep (iRecord number)
       CLOSE( dUnit )
 
 C  - This part then subsets the global variable onto the part for this tile
-C     
-C      IF (sgd_filePrec .EQ. precFloat32) THEN
-C            CALL PASS_GLOBAL_R4_to_RL_SUBSET(global_buff_r4,
-C     &                                       sgd_id, fld,
-C     &                                       mask_len, n_levels)
-C      ELSE
-C            CALL PASS_GLOBAL_R8_to_RL_SUBSET(global_buff_r8,
-C     &                                       sgd_id, fld,
-C     &                                       mask_len, n_levels)
-C      ENDIF
+      mask_len = sgd_numPnts_allproc(sgd_id, mpiMyId+1)
+     
+      IF (sgd_filePrec .EQ. precFloat32) THEN
+            CALL PASS_GLOBAL_R4_to_RL_SUBSET(global_buff_r4,
+     &                                       sgd_id, read_array, 
+     &                                       mask_len, myThid)
+      ELSE
+            CALL PASS_GLOBAL_R8_to_RL_SUBSET(global_buff_r8,
+     &                                       sgd_id, read_array, 
+     &                                       mask_len, myThid)
+      ENDIF
 
 C------------------------------------------------------------------------------|
 
@@ -152,76 +153,106 @@ C----&------------------------------------------------------------------xxxxxxx|
 
 
 
-! C----&------------------------------------------------------------------xxxxxxx|
-! C----&------------------------------------------------------------------xxxxxxx|
-!        SUBROUTINE PASS_GLOBAL_R4_to_RL_SUBSET(global_buff_r4,
-!      &                                        sgd_id, fld,
-!      &                                        mask_len, n_levels)
+C----&------------------------------------------------------------------xxxxxxx|
+C----&------------------------------------------------------------------xxxxxxx|
+        SUBROUTINE PASS_GLOBAL_R4_to_RL_SUBSET(global_buff_r4,
+     &                                         sgd_id, read_array, 
+     &                                         mask_len, myThid)
+       IMPLICIT NONE
+#include "SIZE.h"
+#include "EEPARAMS.h"
+#include "EESUPPORT.h"
+#include "SGD.h"
 
-!       IMPLICIT NONE
-! #include "SIZE.h"
-! #include "EEPARAMS.h"
-! #include "EESUPPORT.h"
-! #include "SGD.h"
-
-!          Real*4 global_buff_r4(max_SGD_points)
-!          INTEGER sgd_id, fld, mask_len, n_levels
-!          INTEGER global_index
-!          INTEGER i, k
-!          INTEGER, PARAMETER :: debug = 1
-! #ifndef ALLOW_USE_MPI
-!          INTEGER, PARAMETER :: mpiMyId = 0
-! #endif
-! C----&------------------------------------------------------------------xxxxxxx|
-! C----&------------------------------------------------------------------xxxxxxx|
+          Real*4 global_buff_r4(max_SGD_points)
+          CHARACTER*(MAX_LEN_MBUF) msgBuf
+          INTEGER myThid
+          INTEGER sgd_id, fld, mask_len, n_levels
+          INTEGER global_index, read_array
+          INTEGER i, k
+          INTEGER, PARAMETER :: debug = 0
+#ifndef ALLOW_USE_MPI
+            INTEGER, PARAMETER :: mpiMyId = 0
+#endif
+C----&------------------------------------------------------------------xxxxxxx|
+C----&------------------------------------------------------------------xxxxxxx|
            
-!            DO i=1, mask_len
-!             global_index = sgd_mask_index_list(sgd_id,mpiMyId+1,i)
-!             DO k=1, n_levels
-!             sgd_subFields(sgd_id,fld,i,k) = 
-!      &       global_buff_r4(global_index,k)
-!             ENDDO
-!            ENDDO
+      if (debug .eq. 1) then
+      WRITE(msgBuf,'(A)') "==========================================="
+      CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
+     &                     SQUEEZE_RIGHT, myThid )
+      WRITE(msgBuf,'(A)') "  BEGIN PASS_GLOBAL_R4_to_RL_SUBSET DEBUG "
+      CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
+     &                     SQUEEZE_RIGHT, myThid )
+      WRITE(msgBuf,'(A)') "==========================================="
+      CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
+     &                     SQUEEZE_RIGHT, myThid )
+      endif
 
-!        END
-! C----&------------------------------------------------------------------xxxxxxx|
-! C----&------------------------------------------------------------------xxxxxxx|
+            DO i=1, mask_len
+             global_index = sgd_mask_index_list(sgd_id,mpiMyId+1,i)
+             if (read_array.eq.0) then
+             sgd_fluxes0(sgd_id,i) = global_buff_r4(global_index)
+             endif
+             if (read_array.eq.1) then
+             sgd_fluxes1(sgd_id,i) = global_buff_r4(global_index)
+             endif
+           ENDDO
+
+      if (debug .eq. 1) then
+      WRITE(msgBuf,'(A)') "==========================================="
+      CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
+     &                     SQUEEZE_RIGHT, myThid )
+      WRITE(msgBuf,'(A)') "  END PASS_GLOBAL_R4_to_RL_SUBSET DEBUG "
+      CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
+     &                     SQUEEZE_RIGHT, myThid )
+      WRITE(msgBuf,'(A)') "==========================================="
+      CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
+     &                     SQUEEZE_RIGHT, myThid )
+      endif
+
+        END
+C----&------------------------------------------------------------------xxxxxxx|
+C----&------------------------------------------------------------------xxxxxxx|
 
 
-! C----&------------------------------------------------------------------xxxxxxx|
-! C----&------------------------------------------------------------------xxxxxxx|
-!        SUBROUTINE PASS_GLOBAL_R8_to_RL_SUBSET(global_buff_r8,
-!      &                                        sgd_id, fld,
-!      &                                        mask_len, n_levels)
+C----&------------------------------------------------------------------xxxxxxx|
+C----&------------------------------------------------------------------xxxxxxx|
+        SUBROUTINE PASS_GLOBAL_R8_to_RL_SUBSET(global_buff_r8,
+     &                                        sgd_id, read_array, 
+     &                                        mask_len, myThid)
+       IMPLICIT NONE
+#include "SIZE.h"
+#include "EEPARAMS.h"
+#include "EESUPPORT.h"
+#include "SGD.h"
 
-!       IMPLICIT NONE
+          Real*8 global_buff_r8(max_SGD_points)
+          CHARACTER*(MAX_LEN_MBUF) msgBuf
+          INTEGER myThid
+          INTEGER sgd_id, fld, mask_len, n_levels
+          INTEGER global_index, read_array
+          INTEGER i, k
+          INTEGER, PARAMETER :: debug = 1
+#ifndef ALLOW_USE_MPI
+            INTEGER, PARAMETER :: mpiMyId = 0
+#endif
+C----&------------------------------------------------------------------xxxxxxx|
+C----&------------------------------------------------------------------xxxxxxx|
+           
+            DO i=1, mask_len
+             global_index = sgd_mask_index_list(sgd_id,mpiMyId+1,i)
+             if (read_array.eq.0) then
+             sgd_fluxes0(sgd_id,i) = global_buff_r8(global_index)
+             endif
+             if (read_array.eq.1) then
+             sgd_fluxes1(sgd_id,i) = global_buff_r8(global_index)
+             endif
+           ENDDO
 
-! #include "SIZE.h"
-! #include "EEPARAMS.h"
-! #include "EESUPPORT.h"
-! #include "SGD.h"
- 
-!           Real*8 global_buff_r8(sNx*sNy*nPx*nPy,Nr)
-!           INTEGER sgd_id, fld, mask_len, n_levels
-!           INTEGER global_index
-!           INTEGER i, k
-!           INTEGER, PARAMETER :: debug = 0
-! #ifndef ALLOW_USE_MPI
-!           INTEGER, PARAMETER :: mpiMyId = 0
-!  #endif
-! C----&------------------------------------------------------------------xxxxxxx|
-! C----&------------------------------------------------------------------xxxxxxx|
-!       DO i=1, mask_len
-!       global_index = sgd_mask_index_list(sgd_id,mpiMyId+1,i)
-!       DO k=1, n_levels
-!             sgd_fluxes(sgd_id,i) = 0.0 = 
-!      &       global_buff_r8(global_index,k)
-!       ENDDO
-!       ENDDO
- 
-!         END
-! C----&------------------------------------------------------------------xxxxxxx|
-! C----&------------------------------------------------------------------xxxxxxx|
+        END
+C----&------------------------------------------------------------------xxxxxxx|
+C----&------------------------------------------------------------------xxxxxxx|
  
 
 

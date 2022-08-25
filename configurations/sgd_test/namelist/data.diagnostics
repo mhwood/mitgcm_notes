@@ -19,10 +19,13 @@
 #--------------------
 # This example dumps EXF diagnostics as snapshot after 30 days
  &DIAGNOSTICS_LIST
-  fields(1,1)  = 'ETAN    ',
-   levels(1,1) = 1.,
-   fileName(1) = 'diagSurf',
-  frequency(1) = -86400.,
+  fields(1,1)  = 'THETA   ',
+   fileName(1) = 'theta',
+  frequency(1) = -1200.,
+#
+  fields(1,2)  = 'SALT    ',
+   fileName(2) = 'salt',
+  frequency(2) = -1200.,
  &
 
 #--------------------

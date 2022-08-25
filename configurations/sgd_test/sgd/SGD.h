@@ -58,6 +58,13 @@ C     This is where the input masks are stored after they are read in
       _RL sgd_fluxes0(nSGD,max_SGD_points)
       _RL sgd_fluxes1(nSGD,max_SGD_points)
 
+C     These determines if the temp/salt are applied and their values
+      LOGICAL sgd_tend_apply_T
+      _RL sgd_discharge_T
+      LOGICAL sgd_tend_apply_S
+      _RL sgd_discharge_S
+
+
 C-----------------------------------------------------------------------
 
       COMMON / DIAG_VEC_VARS_I /
@@ -69,10 +76,15 @@ C-----------------------------------------------------------------------
       COMMON / DIAG_VEC_VARS_R /
      &     sgd_subMask, sgd_fluxes,
      &     sgd_fluxes0, sgd_fluxes1,
-     &     sgd_periods, sgd_starttimes
+     &     sgd_periods, sgd_starttimes,
+     &     sgd_discharge_T, sgd_discharge_S
 
       COMMON / DIAG_VEC_VARS_C /
      &     sgd_mask_fnames,
      &     sgd_volume_flux_fnames
+
+      COMMON / DIAG_VEC_VARS_L /
+     &     sgd_tend_apply_T,
+     &     sgd_tend_apply_S
 
 #endif /* ALLOW_SGD */

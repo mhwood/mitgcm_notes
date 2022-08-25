@@ -97,7 +97,28 @@ C           Determine the record to read from the file
             PRINT *, 'count0, count1, year0, year1',
      &        count0, count1, year0, year1
 
-            CALL SGD_READ_FIELD(flux_filename, sgd_id, iRecord, myThid )
+            PRINT *, 'sgd_fluxes0 before ',sgd_fluxes0
+            PRINT *, 'sgd_fluxes1 before ',sgd_fluxes1
+            PRINT *, 'sgd_fluxes before ',sgd_fluxes
+
+C           If its the first step, then read to both 
+            IF (first) THEN 
+            CALL SGD_READ_FIELD(flux_filename,sgd_id,count0,0,myThid )
+            CALL SGD_READ_FIELD(flux_filename,sgd_id,count1,1,myThid )
+            ENDIF
+
+C           If anything changed, then swap and read the second
+            IF (changed.and.(.not.first)) THEN
+            CALL SGD_SWAP_FIELD(sgd_id, myThid )
+            CALL SGD_READ_FIELD(flux_filename,sgd_id,count1,1,myThid )
+            ENDIF
+
+C           Once both fields are there, then idop the interpolation
+            CALL SGD_INTERP_FIELD(sgd_id, fac, myThid )
+
+            PRINT *, 'sgd_fluxes0 after ',sgd_fluxes0
+            PRINT *, 'sgd_fluxes1 after ',sgd_fluxes1
+            PRINT *, 'sgd_fluxes after ',sgd_fluxes
 
             ENDIF
 

@@ -8,6 +8,8 @@
 
  &SGD_PARM01
   sgd_nml_filePrec = 32,
+  sgd_nml_discharge_T = 2.0,
+  sgd_nml_discharge_S = 4.0,
  &
 
 
