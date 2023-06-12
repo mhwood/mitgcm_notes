@@ -1,2 +1,3 @@
-# mitgcm_sanity_configs
-A repository to store configurations to sanity-check usage or development of the MITgcm
+# MITgcm
+
+This respository is created to store test configurations and miscellaneous notes relevant to setting up and running MITgcm models.
