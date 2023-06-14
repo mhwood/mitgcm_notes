@@ -39,10 +39,10 @@ Note that you must also define an `MPI_INC_DIR` for your choice of MPI, e.g.:
 export MPI_INC_DIR=/act/mpich/intel/include/
 ```
 
-### Copmiling the model code
+### Compiling the model code
 Next, move to the build directory and build your model with MPI using your optfile, e.g.:
 ```
-../../../../tools/genmake2 -mpi -of ../../../../tools/build_options/linux_amd64_ifort -mo ../code
+../../../tools/genmake2 -mpi -of ../../../tools/build_options/linux_amd64_ifort -mo ../code
 make depend
 make
 ```
@@ -63,6 +63,19 @@ mpiexec -np 2 ./mitgcmuv
 
 On slurm, submit this job to the queue as follows:
 ```
+rm -r run
+mkdir run
+cd run
+ln -s ../input/* .
+ln -s ../build/mitgcmuv .
+cp ../job_tutorial_test .
 sbatch job_tutorial_test
+```
+
+# Kevin:
+See the `run/slurm-??????.out` file to observe the messages
+```
+./mitgcmuv: error while loading shared libraries: libnetcdff.so.5: cannot open shared object file: No such file or directory
+./mitgcmuv: error while loading shared libraries: libnetcdff.so.5: cannot open shared object file: No such file or directory
 ```
 
