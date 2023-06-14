@@ -29,7 +29,7 @@ module purge
 ```
 
 ### Choosing an opt file for the build
-Next, design an optimization file for your cluster. There are a long list of options provided with MITgcm in the [MITgcm/tools/options](https://github.com/MITgcm/MITgcm/tree/master/tools/build_options) directory for a variety of systems.
+Next, design an optimization file for your cluster. There are a long list of previously-designed options provided with MITgcm in the [MITgcm/tools/options](https://github.com/MITgcm/MITgcm/tree/master/tools/build_options) directory for a variety of systems.
 For example, if you use the `intel` compiler above with `mpich`, your optfile may be 
 ```
 linux_amd64_ifort
@@ -42,9 +42,11 @@ export MPI_INC_DIR=/act/mpich/intel/include/
 ### Compiling the model code
 Next, move to the build directory and build your model with MPI using your optfile, e.g.:
 ```
+cd build
 ../../../tools/genmake2 -mpi -of ../../../tools/build_options/linux_amd64_ifort -mo ../code
 make depend
 make
+cd ..
 ```
 
 ## Running the model
