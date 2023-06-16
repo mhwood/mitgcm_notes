@@ -69,12 +69,12 @@ Now that the model has been built, test that it works using a job script for you
 #!/bin/bash
 #SBATCH --partition=nodes
 #SBATCH --nodes=1
-#SBATCH --ntasks=2
+#SBATCH --ntasks=4
 #SBATCH --time=00:10:00
 module purge
 module load intel mpich/intel hdf5/intel netcdf/intel
 ulimit -s unlimited
-mpiexec -np 2 ./mitgcmuv
+mpiexec -np 4 ./mitgcmuv
 ```
 
 On slurm, submit this job to the queue as follows:
@@ -86,12 +86,5 @@ ln -s ../input/* .
 ln -s ../build/mitgcmuv .
 cp ../job_tutorial_test .
 sbatch job_tutorial_test
-```
-
-# Kevin:
-See the `run/slurm-??????.out` file to observe the messages
-```
-./mitgcmuv: error while loading shared libraries: libnetcdff.so.5: cannot open shared object file: No such file or directory
-./mitgcmuv: error while loading shared libraries: libnetcdff.so.5: cannot open shared object file: No such file or directory
 ```
 
