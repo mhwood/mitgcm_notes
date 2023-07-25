@@ -1,3 +1,7 @@
-Compiling MITgcm on Spartan
+# Compiling MITgcm on Spartan
 
-All the prerequisites have already been compiled and installed on the cluster for each version of compiler. These prerequisites are jasper, hdf5, netcdf, and MPI libraries. Spartan has four different MPI libraries installed: impi (Intel MPI), mpich, mvapich2, and openmpi. They all should compile and work with WRF, but I have found that the mvapich2 library has the best performance. To successfully compile WRF you need to make sure that environment modules for each library (jasper, hdf5, netcdf, and one of the mpi libraries) are loaded before compiling WRF.
+At the time of this writing, MITgcm has been tested with the gnu compiler using the mpich MPI library along with the requisite netcdf and hdf5 libraries. Other software simiar to MITgcm has been compiled with other compilers (e.g. intel) and other MPI libraries (e.g. mvapich2, openmpi) so these *should* work similarlu with MITgvm (if you'd like to help test, please get in touch!). To successfully compile MITgcm make sure the environment modules for each library (hdf5, netcdf, and one of the mpi libraries) are loaded before compiling.
+
+## To compile MITgcm, use these steps: 
+- First pick the compiler you want to use. I.E. Intel, PGI, or Gnu and version
+- Load the appropriate module for compiler and libraries:
