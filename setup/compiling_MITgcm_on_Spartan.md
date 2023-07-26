@@ -8,7 +8,7 @@ git clone https://github.com/MITgcm/MITgcm
 ```
 
 ## To compile MITgcm, use these steps: 
-After cloning MITgcm, `cd` to the MITgcm directory and create a directory for your model. Within your models's directory, create a `code` and `build` directory. The `code` directory will hold modifications to the main MITgcm model code while the `build` directory will hold the compiled code and executable (mitgcmuv).
+After cloning MITgcm, `cd` to the MITgcm directory and create a directory for your model. Within your models's directory, create a `code` and `build` directory. The `code` directory will hold modifications to the main MITgcm model code while the `build` directory will hold the compiled code and executable (`mitgcmuv`).
 
 To begin, `cd` to the `build` directory.
 
@@ -35,7 +35,21 @@ Finally, use the following commands to compile, using the correct paths to `genm
 make depend
 make
 ```
+To verify the compilation completed correctly, look for the `mitgcmuv` file in the `build` directory.
 
+Once the compilation is complete, you can build a typical slurm job submission script and to run mitgcm with you desired number of processors, e.g.:
+```
+#!/bin/bash
+#SBATCH --partition=nodes
+#SBATCH --nodes=3
+#SBATCH --ntasks=84
+#SBATCH --time=120:00:00
+#SBATCH --mail-type=ALL
+module purge
+module load gnu/6.3.0 netcdf/gnu-6.3.0 mpich/gnu-6.3.0 hdf5/gnu-6.3.0
+ulimit -s unlimited
+mpiexec -np 84 ./mitgcmuv
+```
 
 
 
