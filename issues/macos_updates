@@ -1,0 +1,4 @@
+
+## Sonoma
+When updting to Sonoma, there is an issue with gfortran and ompi
+See the issue here: https://github.com/open-mpi/ompi/issues/12427
